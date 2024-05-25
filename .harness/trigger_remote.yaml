@@ -1,5 +1,6 @@
 inputSet:
   name: trigger_remote
+  tags: {}
   identifier: trigger_remote
   orgIdentifier: default
   projectIdentifier: default_project
@@ -20,7 +21,7 @@ inputSet:
           variables:
             - name: projectName
               type: String
-              value: <+input>
+              value: <+pipeline.stages.Build.variables.projectName>
             - name: projectVersion
               type: String
-              value: <+input>
+              value: <+pipeline.stages.Build.variables.projectVersion>
