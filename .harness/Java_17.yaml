@@ -55,7 +55,7 @@ pipeline:
                   identifier: upload_JAR_to_S3
                   spec:
                     connectorRef: AWS_Personal
-                    region: sa-east-1
+                    region: <+variable.AWS_Region>
                     bucket: <+stage.variables.projectName>-artifactory
                     sourcePath: target/<+stage.variables.projectName>-<+stage.variables.projectVersion>.jar
                     target: /
