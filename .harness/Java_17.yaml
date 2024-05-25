@@ -52,6 +52,33 @@ pipeline:
                     command: |-
                       echo <+stage.variables.projectName>
                       echo <+stage.variables.projectVersion>
+              - step:
+                  type: S3Upload
+                  name: upload JAR to S3
+                  identifier: upload_JAR_to_S3
+                  spec:
+                    connectorRef: AWS_Personal
+                    region: sa-east-1
+                    bucket: <+stage.variables.projectName>-artifactory
+                    sourcePath: target/<+stage.variables.projectName>-<+stage.variables.projectVersion>
+                    target: /
+              - step:
+                  type: BuildAndPushECR
+                  name: Build and Push to ECR
+                  identifier: BuildAndPushECR_1
+                  spec:
+                    connectorRef: AWS_Personal
+                    region: sa-east-1
+                    account: "295439051676"
+                    imageName: <+stage.variables.projectName>
+                    tags:
+                      - <+stage.variables.projectVersion>
+              - step:
+                  name: Sonarqube Analysis
+                  identifier: Sonarqube_Analysis
+                  template:
+                    templateRef: Sonarqube_Java_17
+                    versionLabel: "1.0"
         variables:
           - name: projectName
             type: String
