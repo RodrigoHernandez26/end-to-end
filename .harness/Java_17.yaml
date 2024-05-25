@@ -62,7 +62,9 @@ pipeline:
                     connectorRef: AWS_Personal
                     image: 295439051676.dkr.ecr.sa-east-1.amazonaws.com/build-images:jdk17
                     shell: Sh
-                    command: mvn clean package dependency:copy-dependencies
+                    command: |-
+                      mvn help:evaluate -Dexpression=settings.localRepository | grep -v '\[INFO\]'
+                      mvn clean package dependency:copy-dependencies
                     imagePullPolicy: Always
               - step:
                   type: SaveCacheS3
