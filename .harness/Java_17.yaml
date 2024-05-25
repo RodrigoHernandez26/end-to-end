@@ -107,8 +107,9 @@ pipeline:
           sharedPaths:
             - /root/.m2
           caching:
-            enabled: false
-            paths: []
+            enabled: true
+            paths:
+              - /root/.m2
         variables:
           - name: projectName
             type: String
