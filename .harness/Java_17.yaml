@@ -36,7 +36,7 @@ pipeline:
                     image: 295439051676.dkr.ecr.sa-east-1.amazonaws.com/build-images:jdk17
                     shell: Sh
                     command: |-
-                      mvn clean package dependency:copy-dependencies
+                      ## mvn clean package dependency:copy-dependencies
                       projectName=$(mvn -q -Dexec.executable="echo" -Dexec.args='${project.name}' --non-recursive exec:exec)
                       projectVersion=$(mvn -q -Dexec.executable="echo" -Dexec.args='${project.version}' --non-recursive exec:exec)
                     outputVariables:
@@ -79,4 +79,15 @@ pipeline:
                   template:
                     templateRef: Sonarqube_Java_17
                     versionLabel: "1.0"
+        variables:
+          - name: projectName
+            type: String
+            description: ""
+            required: true
+            value: <+input>
+          - name: projectVersion
+            type: String
+            description: ""
+            required: true
+            value: <+input>
   allowStageExecutions: false
