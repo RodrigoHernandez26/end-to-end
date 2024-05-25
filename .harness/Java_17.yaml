@@ -21,7 +21,7 @@ pipeline:
           cloneCodebase: true
           platform:
             os: Linux
-            arch: Amd64
+            arch: Arm64
           runtime:
             type: Cloud
             spec: {}
@@ -60,7 +60,7 @@ pipeline:
                     connectorRef: AWS_Personal
                     region: sa-east-1
                     bucket: <+stage.variables.projectName>-artifactory
-                    sourcePath: target/<+stage.variables.projectName>-<+stage.variables.projectVersion>
+                    sourcePath: target/<+stage.variables.projectName>-<+stage.variables.projectVersion>.jar
                     target: /
               - step:
                   type: BuildAndPushECR
