@@ -107,7 +107,7 @@ pipeline:
           sharedPaths:
             - /root/.m2
           caching:
-            enabled: true
+            enabled: false
             paths:
               - /root/.m2
         variables:
