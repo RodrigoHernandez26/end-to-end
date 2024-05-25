@@ -28,6 +28,21 @@ pipeline:
           execution:
             steps:
               - step:
+                  type: Run
+                  name: get project info
+                  identifier: get_project_info
+                  spec:
+                    connectorRef: AWS_Personal
+                    image: 295439051676.dkr.ecr.sa-east-1.amazonaws.com/build-images:jdk17
+                    shell: Sh
+                    command: |-
+                      projectName=$(mvn -q -Dexec.executable="echo" -Dexec.args='${project.name}' --non-recursive exec:exec)
+                      projectVersion=$(mvn -q -Dexec.executable="echo" -Dexec.args='${project.version}' --non-recursive exec:exec)
+                    outputVariables:
+                      - name: projectName
+                      - name: projectVersion
+                    imagePullPolicy: Always
+              - step:
                   type: RestoreCacheS3
                   name: RestoreCacheS3_1
                   identifier: RestoreCacheS3_1
@@ -45,13 +60,7 @@ pipeline:
                     connectorRef: AWS_Personal
                     image: 295439051676.dkr.ecr.sa-east-1.amazonaws.com/build-images:jdk17
                     shell: Sh
-                    command: |-
-                      mvn clean package dependency:copy-dependencies
-                      projectName=$(mvn -q -Dexec.executable="echo" -Dexec.args='${project.name}' --non-recursive exec:exec)
-                      projectVersion=$(mvn -q -Dexec.executable="echo" -Dexec.args='${project.version}' --non-recursive exec:exec)
-                    outputVariables:
-                      - name: projectName
-                      - name: projectVersion
+                    command: mvn clean package dependency:copy-dependencies
                     imagePullPolicy: Always
               - step:
                   type: SaveCacheS3
