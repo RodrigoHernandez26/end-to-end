@@ -1,0 +1,26 @@
+inputSet:
+  name: trigger_remote
+  identifier: trigger_remote
+  orgIdentifier: default
+  projectIdentifier: default_project
+  pipeline:
+    identifier: Java_17
+    properties:
+      ci:
+        codebase:
+          repoName: <+trigger.payload.repository.full_name>
+          build:
+            type: branch
+            spec:
+              branch: <+trigger.branch>
+    stages:
+      - stage:
+          identifier: Build
+          type: CI
+          variables:
+            - name: projectName
+              type: String
+              value: <+input>
+            - name: projectVersion
+              type: String
+              value: <+input>
