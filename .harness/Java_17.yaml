@@ -104,6 +104,11 @@ pipeline:
                     imageName: <+stage.variables.projectName>
                     tags:
                       - <+stage.variables.projectVersion>
+          sharedPaths:
+            - /root/.m2
+          caching:
+            enabled: false
+            paths: []
         variables:
           - name: projectName
             type: String
