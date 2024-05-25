@@ -28,6 +28,16 @@ pipeline:
           execution:
             steps:
               - step:
+                  type: RestoreCacheS3
+                  name: RestoreCacheS3_1
+                  identifier: RestoreCacheS3_1
+                  spec:
+                    connectorRef: AWS_Personal
+                    region: <+variable.AWS_Region>
+                    bucket: <+stage.variables.projectName>-artifactory
+                    key: cache-{{ checksum "/root/.m2/repository" }}
+                    archiveFormat: Tar
+              - step:
                   type: Run
                   name: build
                   identifier: build
@@ -43,6 +53,18 @@ pipeline:
                       - name: projectName
                       - name: projectVersion
                     imagePullPolicy: Always
+              - step:
+                  type: SaveCacheS3
+                  name: Save Cache
+                  identifier: Save_Cache
+                  spec:
+                    connectorRef: AWS_Personal
+                    region: <+variable.AWS_Region>
+                    bucket: <+stage.variables.projectName>-artifactory
+                    key: cache-{{ checksum "/root/.m2/repository" }}
+                    sourcePaths:
+                      - /root/.m2/repository
+                    archiveFormat: Tar
               - step:
                   name: Sonarqube Analysis
                   identifier: Sonarqube_Analysis
