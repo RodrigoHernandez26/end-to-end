@@ -83,11 +83,11 @@ pipeline:
           - name: projectName
             type: String
             description: ""
-            required: true
+            required: false
             value: <+input>
           - name: projectVersion
             type: String
             description: ""
-            required: true
+            required: false
             value: <+input>
   allowStageExecutions: false
