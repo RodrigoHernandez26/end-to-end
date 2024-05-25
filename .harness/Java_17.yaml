@@ -51,7 +51,7 @@ pipeline:
                     shell: Sh
                     command: |-
                       echo <+stage.variables.projectName>
-                      echo <+stage.variables.projectVersion>>
+                      echo <+stage.variables.projectVersion>
               - step:
                   type: S3Upload
                   name: upload JAR to S3
