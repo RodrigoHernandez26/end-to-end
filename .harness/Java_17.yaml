@@ -36,7 +36,7 @@ pipeline:
                     image: 295439051676.dkr.ecr.sa-east-1.amazonaws.com/build-images:jdk17
                     shell: Sh
                     command: |-
-                      ## mvn clean package dependency:copy-dependencies
+                      mvn clean package dependency:copy-dependencies
                       projectName=$(mvn -q -Dexec.executable="echo" -Dexec.args='${project.name}' --non-recursive exec:exec)
                       projectVersion=$(mvn -q -Dexec.executable="echo" -Dexec.args='${project.version}' --non-recursive exec:exec)
                     outputVariables:
@@ -44,14 +44,11 @@ pipeline:
                       - name: projectVersion
                     imagePullPolicy: Always
               - step:
-                  type: Run
-                  name: Run_2
-                  identifier: Run_2
-                  spec:
-                    shell: Sh
-                    command: |-
-                      echo <+stage.variables.projectName>
-                      echo <+stage.variables.projectVersion>
+                  name: Sonarqube Analysis
+                  identifier: Sonarqube_Analysis
+                  template:
+                    templateRef: Sonarqube_Java_17
+                    versionLabel: "1.0"
               - step:
                   type: S3Upload
                   name: upload JAR to S3
@@ -60,7 +57,7 @@ pipeline:
                     connectorRef: AWS_Personal
                     region: sa-east-1
                     bucket: <+stage.variables.projectName>-artifactory
-                    sourcePath: target/<+stage.variables.projectName>-<+stage.variables.projectVersion>
+                    sourcePath: target/<+stage.variables.projectName>-<+stage.variables.projectVersion>.jar
                     target: /
               - step:
                   type: BuildAndPushECR
@@ -73,12 +70,6 @@ pipeline:
                     imageName: <+stage.variables.projectName>
                     tags:
                       - <+stage.variables.projectVersion>
-              - step:
-                  name: Sonarqube Analysis
-                  identifier: Sonarqube_Analysis
-                  template:
-                    templateRef: Sonarqube_Java_17
-                    versionLabel: "1.0"
         variables:
           - name: projectName
             type: String
