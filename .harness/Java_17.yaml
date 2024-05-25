@@ -75,7 +75,7 @@ pipeline:
                     bucket: <+stage.variables.projectName>-artifactory
                     key: cache-{{ checksum "./pom.xml" }}
                     sourcePaths:
-                      - ~/.m2
+                      - /root/.m2
                     archiveFormat: Tar
               - step:
                   name: Sonarqube Analysis
