@@ -66,7 +66,7 @@ pipeline:
                   spec:
                     connectorRef: AWS_Personal
                     region: sa-east-1
-                    account: "295439051676"
+                    account: <+secrets.getValue("AWSAccountID")>
                     imageName: <+stage.variables.projectName>
                     tags:
                       - <+stage.variables.projectVersion>
