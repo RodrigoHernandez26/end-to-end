@@ -21,7 +21,7 @@ inputSet:
           variables:
             - name: projectName
               type: String
-              value: <+pipeline.stages.Build.spec.execution.steps.build.output.outputVariables.projectName>
+              value: <+pipeline.stages.Build.spec.execution.steps.get_project_info.output.outputVariables.projectName>
             - name: projectVersion
               type: String
-              value: <+pipeline.stages.Build.spec.execution.steps.build.output.outputVariables.projectVersion>
+              value: <+pipeline.stages.Build.spec.execution.steps.get_project_info.output.outputVariables.projectVersion>
