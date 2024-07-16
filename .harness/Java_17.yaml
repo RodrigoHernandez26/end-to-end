@@ -60,10 +60,7 @@ pipeline:
                     connectorRef: AWS_Personal
                     image: 295439051676.dkr.ecr.sa-east-1.amazonaws.com/build-images:jdk17
                     shell: Sh
-                    command: |-
-                      mvn clean package dependency:copy-dependencies
-                      mvn help:evaluate -Dexpression=settings.localRepository | grep -v '\[INFO\]'
-                      ls /root/.m2/
+                    command: mvn clean package dependency:copy-dependencies
                     imagePullPolicy: Always
               - step:
                   type: SaveCacheS3
@@ -78,11 +75,19 @@ pipeline:
                       - /root/.m2
                     archiveFormat: Tar
               - step:
-                  name: Sonarqube Analysis
-                  identifier: Sonarqube_Analysis
-                  template:
-                    templateRef: Sonarqube_Java_17
-                    versionLabel: "1.0"
+                  type: Run
+                  name: run test
+                  identifier: run_test
+                  spec:
+                    connectorRef: AWS_Personal
+                    image: 295439051676.dkr.ecr.sa-east-1.amazonaws.com/build-images:jdk17
+                    shell: Sh
+                    command: mvn test
+                    reports:
+                      type: JUnit
+                      spec:
+                        paths:
+                          - target/surefire-reports/*.xml
               - step:
                   type: S3Upload
                   name: upload JAR to S3
