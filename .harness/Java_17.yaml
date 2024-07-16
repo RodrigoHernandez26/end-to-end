@@ -50,7 +50,7 @@ pipeline:
                     connectorRef: AWS_Personal
                     region: <+variable.AWS_Region>
                     bucket: <+stage.variables.projectName>-artifactory
-                    key: cache-{{ checksum "./pom.xml" }}
+                    key: cache-{{ checksum "pom.xml" }}
                     archiveFormat: Tar
               - step:
                   type: Run
@@ -73,7 +73,7 @@ pipeline:
                     connectorRef: AWS_Personal
                     region: <+variable.AWS_Region>
                     bucket: <+stage.variables.projectName>-artifactory
-                    key: cache-{{ checksum "./pom.xml" }}
+                    key: cache-{{ checksum "pom.xml" }}
                     sourcePaths:
                       - /root/.m2
                     archiveFormat: Tar
