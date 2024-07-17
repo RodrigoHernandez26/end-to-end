@@ -25,3 +25,30 @@ inputSet:
             - name: projectVersion
               type: String
               value: <+pipeline.stages.Build.spec.execution.steps.get_project_info.output.outputVariables.projectVersion>
+      - stage:
+          identifier: deploydev
+          type: Deployment
+          spec:
+            service:
+              serviceInputs:
+                serviceDefinition:
+                  type: Kubernetes
+                  spec:
+                    manifests:
+                      - manifest:
+                          identifier: mymanifest
+                          type: K8sManifest
+                          spec:
+                            store:
+                              type: Github
+                              spec:
+                                repoName: <+trigger.payload.repository.full_name>
+                                branch: <+trigger.branch>
+            environment:
+              infrastructureDefinitions:
+                - identifier: prodinfra
+                  inputs:
+                    identifier: prodinfra
+                    type: KubernetesDirect
+                    spec:
+                      namespace: <+pipeline.stages.Build.spec.execution.steps.get_project_info.output.outputVariables.projectName>-prod
