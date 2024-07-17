@@ -49,7 +49,7 @@ pipeline:
                   spec:
                     connectorRef: AWS_Personal
                     region: <+variable.AWS_Region>
-                    bucket: <+stage.variables.projectName>-artifactory
+                    bucket: <+pipeline.variables.projectName>-artifactory
                     key: cache-{{ checksum "pom.xml" }}
                     archiveFormat: Tar
               - step:
@@ -69,7 +69,7 @@ pipeline:
                   spec:
                     connectorRef: AWS_Personal
                     region: <+variable.AWS_Region>
-                    bucket: <+stage.variables.projectName>-artifactory
+                    bucket: <+pipeline.variables.projectName>-artifactory
                     key: cache-{{ checksum "pom.xml" }}
                     sourcePaths:
                       - /root/.m2
@@ -95,8 +95,8 @@ pipeline:
                   spec:
                     connectorRef: AWS_Personal
                     region: <+variable.AWS_Region>
-                    bucket: <+stage.variables.projectName>-artifactory
-                    sourcePath: target/<+stage.variables.projectName>-<+stage.variables.projectVersion>.jar
+                    bucket: <+pipeline.variables.projectName>-artifactory
+                    sourcePath: target/<+pipeline.variables.projectName>-<+pipeline.variables.projectVersion>.jar
                     target: /
               - step:
                   type: BuildAndPushECR
@@ -106,9 +106,9 @@ pipeline:
                     connectorRef: AWS_Personal
                     region: <+variable.AWS_Region>
                     account: <+secrets.getValue("AWSAccountID")>
-                    imageName: <+stage.variables.projectName>
+                    imageName: <+pipeline.variables.projectName>
                     tags:
-                      - <+stage.variables.projectVersion>
+                      - <+pipeline.variables.projectVersion>
           sharedPaths:
             - /root/.m2
           caching:
@@ -126,117 +126,15 @@ pipeline:
             description: ""
             required: false
             value: <+input>
-    - stage:
-        name: approval
-        identifier: approval
-        description: ""
-        type: Approval
-        spec:
-          execution:
-            steps:
-              - step:
-                  name: dev approval
-                  identifier: dev_approval
-                  type: HarnessApproval
-                  timeout: 1d
-                  spec:
-                    approvalMessage: |-
-                      Please review the following information
-                      and approve the pipeline progression
-                    includePipelineExecutionHistory: true
-                    approvers:
-                      minimumCount: 1
-                      disallowPipelineExecutor: false
-                      userGroups:
-                        - account._account_all_users
-                    isAutoRejectEnabled: false
-                    approverInputs: []
-        tags: {}
-    - stage:
-        name: deploydev
-        identifier: deploydev
-        description: ""
-        type: Deployment
-        spec:
-          deploymentType: Kubernetes
-          service:
-            serviceRef: prodservice
-            serviceInputs:
-              serviceDefinition:
-                type: Kubernetes
-                spec:
-                  manifests:
-                    - manifest:
-                        identifier: mymanifest
-                        type: K8sManifest
-                        spec:
-                          store:
-                            type: Github
-                            spec:
-                              repoName: <+input>
-                              branch: <+input>
-          environment:
-            environmentRef: prod
-            deployToAll: false
-            infrastructureDefinitions:
-              - identifier: prodinfra
-                inputs:
-                  identifier: prodinfra
-                  type: KubernetesDirect
-                  spec:
-                    namespace: <+input>
-          execution:
-            steps:
-              - stepGroup:
-                  name: Canary Deployment
-                  identifier: canaryDeployment
-                  steps:
-                    - step:
-                        name: Canary Deployment
-                        identifier: canaryDeployment
-                        type: K8sCanaryDeploy
-                        timeout: 10m
-                        spec:
-                          instanceSelection:
-                            type: Count
-                            spec:
-                              count: 1
-                          skipDryRun: false
-                    - step:
-                        name: Canary Delete
-                        identifier: canaryDelete
-                        type: K8sCanaryDelete
-                        timeout: 10m
-                        spec: {}
-              - stepGroup:
-                  name: Primary Deployment
-                  identifier: primaryDeployment
-                  steps:
-                    - step:
-                        name: Rolling Deployment
-                        identifier: rollingDeployment
-                        type: K8sRollingDeploy
-                        timeout: 10m
-                        spec:
-                          skipDryRun: false
-            rollbackSteps:
-              - step:
-                  name: Canary Delete
-                  identifier: rollbackCanaryDelete
-                  type: K8sCanaryDelete
-                  timeout: 10m
-                  spec: {}
-              - step:
-                  name: Rolling Rollback
-                  identifier: rollingRollback
-                  type: K8sRollingRollback
-                  timeout: 10m
-                  spec: {}
-        tags: {}
-        failureStrategies:
-          - onFailure:
-              errors:
-                - AllErrors
-              action:
-                type: StageRollback
   allowStageExecutions: false
+  variables:
+    - name: projectName
+      type: String
+      description: ""
+      required: false
+      value: <+input>
+    - name: projectVersion
+      type: String
+      description: ""
+      required: false
+      value: <+input>
