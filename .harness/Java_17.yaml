@@ -149,6 +149,10 @@ pipeline:
                             spec:
                               repoName: <+input>
                               branch: <+input>
+                              paths:
+                                - <+input>
+                          valuesPaths:
+                            - <+input>
           environment:
             environmentRef: prod
             deployToAll: false
