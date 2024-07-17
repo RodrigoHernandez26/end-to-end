@@ -115,15 +115,26 @@ pipeline:
             enabled: false
             paths:
               - /root/.m2
+        variables:
+          - name: projectName
+            type: String
+            description: ""
+            required: false
+            value: <+input>
+          - name: projectVersion
+            type: String
+            description: ""
+            required: false
+            value: <+input>
   allowStageExecutions: false
   variables:
     - name: projectName
       type: String
       description: ""
       required: false
-      value: <+input>
+      value: <+stage.variables.projectName>
     - name: projectVersion
       type: String
       description: ""
       required: false
-      value: <+input>
+      value: <+stage.variables.projectVersion>
