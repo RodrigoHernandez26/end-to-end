@@ -82,7 +82,9 @@ pipeline:
                     shell: Bash
                     command: |-
                       echo <+pipeline.variables.projectName>
-                      echo <+pipeline.variables.projectVersion>>
+                      echo <+pipeline.variables.projectVersion>
+                      echo <+stage.variables.projectName>
+                      echo <+stage.variables.projectVersion>
         variables:
           - name: projectName
             type: String
