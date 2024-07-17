@@ -42,73 +42,6 @@ pipeline:
                       - name: projectName
                       - name: projectVersion
                     imagePullPolicy: Always
-              - step:
-                  type: RestoreCacheS3
-                  name: Restore Cache
-                  identifier: RestoreCacheS3_1
-                  spec:
-                    connectorRef: AWS_Personal
-                    region: <+variable.AWS_Region>
-                    bucket: <+pipeline.variables.projectName>-artifactory
-                    key: cache-{{ checksum "pom.xml" }}
-                    archiveFormat: Tar
-              - step:
-                  type: Run
-                  name: build
-                  identifier: build
-                  spec:
-                    connectorRef: AWS_Personal
-                    image: 295439051676.dkr.ecr.sa-east-1.amazonaws.com/build-images:jdk17
-                    shell: Sh
-                    command: mvn clean package dependency:copy-dependencies
-                    imagePullPolicy: Always
-              - step:
-                  type: SaveCacheS3
-                  name: Save Cache
-                  identifier: Save_Cache
-                  spec:
-                    connectorRef: AWS_Personal
-                    region: <+variable.AWS_Region>
-                    bucket: <+pipeline.variables.projectName>-artifactory
-                    key: cache-{{ checksum "pom.xml" }}
-                    sourcePaths:
-                      - /root/.m2
-                    archiveFormat: Tar
-              - step:
-                  type: Run
-                  name: run test
-                  identifier: run_test
-                  spec:
-                    connectorRef: AWS_Personal
-                    image: 295439051676.dkr.ecr.sa-east-1.amazonaws.com/build-images:jdk17
-                    shell: Sh
-                    command: mvn test
-                    reports:
-                      type: JUnit
-                      spec:
-                        paths:
-                          - target/surefire-reports/*.xml
-              - step:
-                  type: S3Upload
-                  name: upload JAR to S3
-                  identifier: upload_JAR_to_S3
-                  spec:
-                    connectorRef: AWS_Personal
-                    region: <+variable.AWS_Region>
-                    bucket: <+pipeline.variables.projectName>-artifactory
-                    sourcePath: target/<+pipeline.variables.projectName>-<+pipeline.variables.projectVersion>.jar
-                    target: /
-              - step:
-                  type: BuildAndPushECR
-                  name: Build and Push to ECR
-                  identifier: BuildAndPushECR_1
-                  spec:
-                    connectorRef: AWS_Personal
-                    region: <+variable.AWS_Region>
-                    account: <+secrets.getValue("AWSAccountID")>
-                    imageName: <+pipeline.variables.projectName>
-                    tags:
-                      - <+pipeline.variables.projectVersion>
           sharedPaths:
             - /root/.m2
           caching:
@@ -150,6 +83,17 @@ pipeline:
                     command: |-
                       echo <+pipeline.variables.projectName>
                       echo <+pipeline.variables.projectVersion>>
+        variables:
+          - name: projectName
+            type: String
+            description: ""
+            required: false
+            value: <+pipeline.variables.projectName>
+          - name: projectVersion
+            type: String
+            description: ""
+            required: false
+            value: <+pipeline.variables.projectVersion>
   allowStageExecutions: false
   variables:
     - name: projectName
