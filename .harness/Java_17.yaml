@@ -127,38 +127,61 @@ pipeline:
             required: false
             value: <+input>
     - stage:
-        name: teste
-        identifier: teste
+        name: deployprod
+        identifier: deployprod
         description: ""
-        type: CI
+        type: Deployment
         spec:
-          cloneCodebase: false
-          platform:
-            os: Linux
-            arch: Amd64
-          runtime:
-            type: Cloud
-            spec: {}
+          deploymentType: Kubernetes
+          service:
+            serviceRef: prodservice
+            serviceInputs:
+              serviceDefinition:
+                type: Kubernetes
+                spec:
+                  manifests:
+                    - manifest:
+                        identifier: mymanifest
+                        type: K8sManifest
+                        spec:
+                          store:
+                            type: Github
+                            spec:
+                              repoName: <+input>
+                              branch: <+input>
+          environment:
+            environmentRef: prod
+            deployToAll: false
+            infrastructureDefinitions:
+              - identifier: prodinfra
+                inputs:
+                  identifier: prodinfra
+                  type: KubernetesDirect
+                  spec:
+                    namespace: <+input>
           execution:
             steps:
               - step:
-                  type: Run
-                  name: Run_1
-                  identifier: Run_1
+                  name: Rollout Deployment
+                  identifier: rolloutDeployment
+                  type: K8sRollingDeploy
+                  timeout: 10m
                   spec:
-                    shell: Sh
-                    command: |-
-                      echo <+pipeline.variables.projectName>
-                      echo <+pipeline.variables.projectVersion>>
+                    skipDryRun: false
+                    pruningEnabled: false
+            rollbackSteps:
+              - step:
+                  name: Rollback Rollout Deployment
+                  identifier: rollbackRolloutDeployment
+                  type: K8sRollingRollback
+                  timeout: 10m
+                  spec:
+                    pruningEnabled: false
+        tags: {}
+        failureStrategies:
+          - onFailure:
+              errors:
+                - AllErrors
+              action:
+                type: StageRollback
   allowStageExecutions: false
-  variables:
-    - name: projectName
-      type: String
-      description: ""
-      required: false
-      value: <+input>
-    - name: projectVersion
-      type: String
-      description: ""
-      required: false
-      value: <+input>
