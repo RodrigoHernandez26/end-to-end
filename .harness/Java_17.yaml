@@ -83,19 +83,6 @@ pipeline:
                     command: |-
                       echo <+pipeline.variables.projectName>
                       echo <+pipeline.variables.projectVersion>
-                      echo <+stage.variables.projectName>
-                      echo <+stage.variables.projectVersion>
-        variables:
-          - name: projectName
-            type: String
-            description: ""
-            required: false
-            value: <+pipeline.variables.projectName>
-          - name: projectVersion
-            type: String
-            description: ""
-            required: false
-            value: <+pipeline.variables.projectVersion>
   allowStageExecutions: false
   variables:
     - name: projectName
