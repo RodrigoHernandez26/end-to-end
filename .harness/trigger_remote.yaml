@@ -44,6 +44,15 @@ inputSet:
                               spec:
                                 repoName: <+trigger.payload.repository.full_name>
                                 branch: <+trigger.branch>
+                    artifacts:
+                      primary:
+                        primaryArtifactRef: ecrrepo
+                        sources:
+                          - identifier: ecrrepo
+                            type: Ecr
+                            spec:
+                              tag: <+pipeline.stages.Build.spec.execution.steps.get_project_info.output.outputVariables.projectVersion>
+                              imagePath: <+pipeline.stages.Build.spec.execution.steps.get_project_info.output.outputVariables.projectName>
             environment:
               infrastructureDefinitions:
                 - identifier: prodinfra
