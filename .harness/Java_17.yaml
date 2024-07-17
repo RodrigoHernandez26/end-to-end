@@ -102,9 +102,9 @@ pipeline:
       type: String
       description: ""
       required: false
-      value: <+stage.variables.projectName>
+      value: <+pipeline.stages.Build.variables.projectName>
     - name: projectVersion
       type: String
       description: ""
       required: false
-      value: <+stage.variables.projectVersion>
+      value: <+pipeline.stages.Build.variables.projectVersion>
