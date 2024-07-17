@@ -98,11 +98,15 @@ pipeline:
                       primaryArtifactRef: <+input>
                       sources: <+input>
           environment:
-            environmentRef: <+input>
+            environmentRef: prod
             deployToAll: false
-            environmentInputs: <+input>
-            serviceOverrideInputs: <+input>
-            infrastructureDefinitions: <+input>
+            infrastructureDefinitions:
+              - identifier: prodinfra
+                inputs:
+                  identifier: prodinfra
+                  type: KubernetesDirect
+                  spec:
+                    namespace: <+input>
           execution:
             steps:
               - step:
