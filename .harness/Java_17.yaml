@@ -126,6 +126,30 @@ pipeline:
             description: ""
             required: false
             value: <+input>
+    - stage:
+        name: teste
+        identifier: teste
+        description: ""
+        type: CI
+        spec:
+          cloneCodebase: false
+          platform:
+            os: Linux
+            arch: Amd64
+          runtime:
+            type: Cloud
+            spec: {}
+          execution:
+            steps:
+              - step:
+                  type: Run
+                  name: Run_1
+                  identifier: Run_1
+                  spec:
+                    shell: Bash
+                    command: |-
+                      echo <+pipeline.variables.projectName>
+                      echo <+pipeline.variables.projectVersion>>
   allowStageExecutions: false
   variables:
     - name: projectName
