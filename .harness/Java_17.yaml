@@ -93,6 +93,10 @@ pipeline:
                             spec:
                               repoName: <+input>
                               branch: <+input>
+                  artifacts:
+                    primary:
+                      primaryArtifactRef: <+input>
+                      sources: <+input>
           environment:
             environmentRef: prod
             deployToAll: false
