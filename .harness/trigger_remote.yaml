@@ -26,7 +26,7 @@ inputSet:
               type: String
               value: <+pipeline.stages.Build.spec.execution.steps.get_project_info.output.outputVariables.projectVersion>
       - stage:
-          identifier: deploydev
+          identifier: deployprod
           type: Deployment
           spec:
             service:
@@ -51,4 +51,4 @@ inputSet:
                     identifier: prodinfra
                     type: KubernetesDirect
                     spec:
-                      namespace: <+pipeline.stages.Build.spec.execution.steps.get_project_info.output.outputVariables.projectName>-prod
+                      namespace: <+pipeline.stages.Build.variables.projectName>-prod
