@@ -1,0 +1,40 @@
+service:
+  name: prodservice
+  identifier: prodservice
+  serviceDefinition:
+    type: Kubernetes
+    spec:
+      manifests:
+        - manifest:
+            identifier: mymanifest
+            type: K8sManifest
+            spec:
+              store:
+                type: Github
+                spec:
+                  connectorRef: account.Github_OAuth_1715105217041
+                  gitFetchType: Branch
+                  paths:
+                    - /templates/
+                  repoName: <+input>
+                  branch: <+input>
+              valuesPaths:
+                - /templates/values.yaml
+              skipResourceVersioning: false
+              enableDeclarativeRollback: false
+      artifacts:
+        primary:
+          primaryArtifactRef: <+input>
+          sources:
+            - spec:
+                connectorRef: AWS_Personal
+                imagePath: <+input>
+                tag: <+input>
+                digest: ""
+                region: sa-east-1
+                registryId: "295439051676"
+              identifier: ecrrepo
+              type: Ecr
+  gitOpsEnabled: false
+  orgIdentifier: default
+  projectIdentifier: default_project
