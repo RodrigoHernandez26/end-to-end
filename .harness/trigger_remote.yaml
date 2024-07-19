@@ -73,3 +73,15 @@ inputSet:
                     type: KubernetesDirect
                     spec:
                       namespace: <+pipeline.stages.Build.spec.execution.steps.get_project_info.output.outputVariables.projectName>-<+pipeline.stages.deploypre.spec.env.name>
+      - stage:
+          identifier: deployprod
+          type: Deployment
+          spec:
+            environment:
+              infrastructureDefinitions:
+                - identifier: prodinfra
+                  inputs:
+                    identifier: prodinfra
+                    type: KubernetesDirect
+                    spec:
+                      namespace: <+pipeline.stages.Build.spec.execution.steps.get_project_info.output.outputVariables.projectName>-<+pipeline.stages.deployprod.spec.env.name>
