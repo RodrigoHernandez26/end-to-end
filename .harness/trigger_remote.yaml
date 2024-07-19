@@ -26,7 +26,7 @@ inputSet:
               type: String
               value: <+pipeline.stages.Build.spec.execution.steps.get_project_info.output.outputVariables.projectVersion>
       - stage:
-          identifier: deployprod
+          identifier: deploydev
           type: Deployment
           spec:
             service:
@@ -43,7 +43,7 @@ inputSet:
                               type: Github
                               spec:
                                 repoName: <+trigger.payload.repository.full_name>
-                                branch: <+trigger.branch>
+                                branch: " <+trigger.branch>"
                     artifacts:
                       primary:
                         primaryArtifactRef: ecrrepo
@@ -51,8 +51,8 @@ inputSet:
                           - identifier: ecrrepo
                             type: Ecr
                             spec:
-                              tag: <+pipeline.stages.Build.spec.execution.steps.get_project_info.output.outputVariables.projectVersion>
                               imagePath: <+pipeline.stages.Build.spec.execution.steps.get_project_info.output.outputVariables.projectName>
+                              tag: <+pipeline.stages.Build.spec.execution.steps.get_project_info.output.outputVariables.projectVersion>
             environment:
               infrastructureDefinitions:
                 - identifier: devinfra
