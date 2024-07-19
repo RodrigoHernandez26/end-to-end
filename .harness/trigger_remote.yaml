@@ -55,9 +55,21 @@ inputSet:
                               imagePath: <+pipeline.stages.Build.spec.execution.steps.get_project_info.output.outputVariables.projectName>
             environment:
               infrastructureDefinitions:
-                - identifier: prodinfra
+                - identifier: devinfra
                   inputs:
-                    identifier: prodinfra
+                    identifier: devinfra
                     type: KubernetesDirect
                     spec:
-                      namespace: <+pipeline.stages.Build.variables.projectName>-prod
+                      namespace: <+pipeline.stages.Build.spec.execution.steps.get_project_info.output.outputVariables.projectName>-<+pipeline.stages.deploydev.spec.env.name>
+      - stage:
+          identifier: deploypre
+          type: Deployment
+          spec:
+            environment:
+              infrastructureDefinitions:
+                - identifier: preinfra
+                  inputs:
+                    identifier: preinfra
+                    type: KubernetesDirect
+                    spec:
+                      namespace: <+pipeline.stages.Build.spec.execution.steps.get_project_info.output.outputVariables.projectName>-<+pipeline.stages.deploypre.spec.env.name>
