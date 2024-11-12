@@ -259,4 +259,4 @@ pipeline:
                 - AllErrors
               action:
                 type: StageRollback
-  allowStageExecutions: false
+  allowStageExecutions: true
